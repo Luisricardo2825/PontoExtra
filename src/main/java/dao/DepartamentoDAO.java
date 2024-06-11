@@ -1,0 +1,89 @@
+package dao;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import entidades.Departamento;
+import util.JPAUtil;
+
+public class DepartamentoDAO {
+
+    /**
+     * Metodo para salvar um dep no banco de dados
+     */
+    public static void save(Departamento dep) {
+        EntityManager em = JPAUtil.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(dep);
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    /**
+     * Metodo para atualizar um dep no banco de dados
+     * 
+     * @param dep
+     * @return
+     */
+    public static Departamento update(Departamento dep) {
+        EntityManager em = JPAUtil.createEntityManager();
+        Departamento depAtualizado = dep;
+        em.getTransaction().begin();
+        depAtualizado = em.merge(dep);
+        em.getTransaction().commit();
+        em.close();
+        return depAtualizado;
+    }
+
+    /**
+     * Metodo para deletar um dep no banco de dados
+     *
+     * @param dep
+     */
+    public static void delete(Departamento dep) {
+        EntityManager em = JPAUtil.createEntityManager();
+        em.getTransaction().begin();
+        dep = em.find(Departamento.class, dep.getId());
+        em.remove(dep);
+        em.getTransaction().commit();
+        em.close();
+
+    }
+
+    /**
+     * Metodo para buscar um dep no banco de dados
+     *
+     * @param id
+     * @return
+     */
+    public static Departamento getById(Integer id) {
+        EntityManager em = JPAUtil.createEntityManager();
+        Departamento dep = em.find(Departamento.class, id);
+        em.close();
+        return dep;
+    }
+
+    /**
+     * Metodo para buscar todos os deps no banco de dados
+     *
+     * @return
+     */
+    public static List<Departamento> getAll() {
+        EntityManager em = JPAUtil.createEntityManager();
+        Query consultaBuscaTodos = em.createQuery("SELECT a FROM Departamento a");
+        @SuppressWarnings("unchecked")
+        List<Departamento> resultadoDaBuscaDeTodos = consultaBuscaTodos.getResultList();
+        return resultadoDaBuscaDeTodos;
+    }
+    
+    
+    public static Integer getMax() {
+    	 EntityManager em = JPAUtil.createEntityManager();
+         Query consultaBuscaTodos = em.createNamedQuery("maxNumeroSorteado");
+         Integer resultadoMax = (Integer) consultaBuscaTodos.getSingleResult();
+         return resultadoMax;
+    }
+
+}
